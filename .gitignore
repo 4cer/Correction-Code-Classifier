@@ -1,0 +1,6 @@
+# DO NOT UPLOAD THE DATASET
+# As its size and format are currently unknown
+dataset/*
+
+# In case a separate gitignore is added into the directory
+!dataset/!.gitignore
