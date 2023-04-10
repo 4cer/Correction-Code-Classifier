@@ -1,0 +1,9 @@
+# DO NOT UPLOAD OTHER CONTENTS OF THIS DIRECTORY TO REMOTE
+#
+# Dataset can be hosted externally or assembled in-place
+# on the training machine via the generation script provided 
+# the task is lightweight enough.
+
+# Ignore everything but self
+# *
+!.gitignore
