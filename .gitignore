@@ -1,4 +1,7 @@
-# DO NOT UPLOAD THE DATASET
+# DO NOT UPLOAD virtual environments
+.venv
+
+# DO NOT UPLOAD the dataset
 # As its size and format are currently unknown
 dataset/*
 

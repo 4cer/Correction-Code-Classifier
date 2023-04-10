@@ -1,2 +1,2 @@
 # AO_Projekt_1
-Pierwszy projek z AO (Algorytmy Optymalizacji)
+Pierwszy projekt z AO (Algorytmy Optymalizacji)

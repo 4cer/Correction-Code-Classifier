@@ -25,10 +25,9 @@ def module_test():
 
 def main():
     pytorch_test()
-    # module_test()
+    module_test()
 
 
 if __name__ == "__main__":
     main()
-    module_test()
 
