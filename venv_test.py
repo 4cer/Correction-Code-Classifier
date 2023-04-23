@@ -2,6 +2,7 @@ import numpy as np
 import torch
 
 import packages_classifier.example_module as em
+import packages_gio.read_data as rd
 
 
 def pytorch_test(nvidia = True):
@@ -23,9 +24,15 @@ def module_test():
     print(np.zeros(dtype=np.uint, shape=(1, 24)))
 
 
+def file_to_array_test():
+    myArray = rd.read_file("results.txt")
+    print(rd.read_range(myArray, 1, 300))
+
+
 def main():
     pytorch_test()
     module_test()
+    file_to_array_test()
 
 
 if __name__ == "__main__":

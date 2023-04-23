@@ -3,6 +3,10 @@
 dataset/*
 !dataset/.gitignore
 
+# IDE SPECIFIC
+.vscode
+.idea
+
 # Boilerplate ignores
 # Byte-compiled / optimized / DLL files
 __pycache__/
