@@ -1,11 +1,11 @@
 import itertools
 import more_itertools
 
-def hamming_codec(data):
+
+def hamming_coder(data):
     final_string = ""
     for batch in more_itertools.chunked(data, 128):
-        print(''.join(map(str, batch)))
-        print(batch)
+        #print(''.join(map(str, batch)))
         batch.reverse()
         c, ch, j, r, h = 0, 0, 0, 0, []
 
@@ -42,11 +42,11 @@ def hamming_codec(data):
         h.reverse()
         a = ''.join(map(str, h))
         final_string += a;
-    print(final_string)
     return final_string
-def hamming_decodec(data):
+
+
+def hamming_decoder(data):
     for batch in more_itertools.chunked(data, 136):
-        print(batch)
         batch.reverse()
         c, ch, j, r, error, h, parity_list, h_copy = 0, 0, 0, 0, 0, [], [], []
 
@@ -78,19 +78,21 @@ def hamming_decodec(data):
         error = sum(int(parity_list) * (2 ** i) for i, parity_list in enumerate(parity_list[::-1]))
 
         if ((error) == 0):
-            print('There is no error in the hamming code received')
+            #print('There is no error in the hamming code received')
+            continue
 
         elif ((error) >= len(h_copy)):
-            print('Error cannot be detected')
+            #print('Error cannot be detected')
+            continue
 
         else:
-            print('Error is in', error, 'bit')
+            #print('Error is in', error, 'bit')
 
             if (h_copy[error - 1] == '0'):
                 h_copy[error - 1] = '1'
 
             elif (h_copy[error - 1] == '1'):
                 h_copy[error - 1] = '0'
-                print('After correction hamming code is:- ')
+                #print('After correction hamming code is:- ')
             h_copy.reverse()
-            print(int(''.join(map(str, h_copy))))
+            #print(int(''.join(map(str, h_copy))))
