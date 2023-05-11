@@ -6,7 +6,7 @@ import random
 
 i = 0
 f = open("demofile.txt", "w")
-while i < 1000:
+while i < 10:
     data_byte = bytearray(os.urandom(256))
     data_bit = ''.join(format(byte, '08b') for byte in data_byte)
     rnd = random.randint(0, 3)
