@@ -1,3 +1,4 @@
+import random
 from reedsolo import RSCodec, ReedSolomonError
 from bittobytes import bitstring_to_bytes
 import itertools
@@ -5,7 +6,7 @@ import more_itertools
 
 
 def reed_coder(data):
-    rsc = RSCodec(10)
+    rsc = RSCodec(random.randint(8,15))
     final_string = ""
     for batch in more_itertools.chunked(data, 128):
        # print(batch)
