@@ -15,7 +15,7 @@ def __test__():
     import numpy as np
     sample_input = np.zeros((10,382),dtype=np.float16)
     model = NeuralNet()
-
+    
     import torch
     with torch.no_grad():
         # Convert sample input to a tensor
@@ -37,6 +37,13 @@ def __train__():
     import numpy as np
 
     model = NeuralNet()
+
+    if model.gpu_available():
+        model.empty_gpu_cache()
+        dev = model.get_device()
+        model = model.to(dev)
+    
+    print(f"NeuralNet params on CUDA: {next(model.parameters()).is_cuda}")
     
     # TRAIN MODEL
     train_model(model, X_train, y_train, X_val, y_val)
