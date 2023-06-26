@@ -7,6 +7,15 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=700, batch_size=10
     y_train = torch.tensor(y_train, dtype=torch.long)
     X_val = torch.tensor(X_val, dtype=torch.float32)
     y_val = torch.tensor(y_val, dtype=torch.long)
+
+    # Load to GPU
+    if model.gpu_available():
+        dev = model.get_device()
+        X_train = X_train.to(dev)
+        y_train = y_train.to(dev)
+        X_val = X_val.to(dev)
+        y_val = y_val.to(dev)
+    print(f"Data is on CUDA: {X_train.is_cuda and y_train.is_cuda and X_val.is_cuda and y_val.is_cuda}")
     
     # Create data loaders
     train_data = torch.utils.data.TensorDataset(X_train, y_train)
@@ -17,6 +26,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=700, batch_size=10
     # Define the optimizer and loss function
     optimizer = optim.Adam(model.parameters())
     criterion = nn.CrossEntropyLoss()
+
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
     # Training loop
     for epoch in range(epochs):

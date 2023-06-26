@@ -210,6 +210,15 @@ class NeuralNet(nn.Module):
         """        
         self.__VERBOSE_LEVEL = verbose_level
 
+    def gpu_available(self):
+        return torch.cuda.is_available()
+    
+    def get_device(self):
+        return torch.device("cuda:0") if torch.cuda.is_available() else torch.device("cpu")
+    
+    def empty_gpu_cache(self):
+        torch.cuda.empty_cache()
+
 
 def test_model(model, sample_input):
     with torch.no_grad():
