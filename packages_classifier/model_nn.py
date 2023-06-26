@@ -44,7 +44,7 @@ class NeuralNet(nn.Module):
 
         # Post-inception
         self.p1_avgp_16x1 = nn.AvgPool1d(kernel_size=16)
-        self.p2_dropout = nn.Dropout(p=0.3)
+        self.p2_dropout = nn.Dropout(p=0.2)
         self.p3_linear = nn.Linear(in_features=256, out_features=128)
         self.p4_linear = nn.Linear(in_features=128, out_features=4)
         
@@ -189,7 +189,7 @@ class NeuralNet(nn.Module):
         return concatenated
     
 
-    def save_network(self):
+    def save_network(self, path):
         torch.save(self.state_dict(), "model.pt")
         pass
 

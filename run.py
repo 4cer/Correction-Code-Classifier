@@ -41,7 +41,7 @@ def __train__():
     # TRAIN MODEL
     train_model(model, X_train, y_train, X_val, y_val)
     # SAVE MODEL
-    model.save_network()
+    model.save_network("model_fi.pt")
     pass
 
 def __trained__():
