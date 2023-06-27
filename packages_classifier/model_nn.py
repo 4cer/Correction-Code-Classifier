@@ -190,11 +190,11 @@ class NeuralNet(nn.Module):
     
 
     def save_network(self, path):
-        torch.save(self.state_dict(), "model.pt")
+        torch.save(self.state_dict(), path)
         pass
 
-    def load_network(self):
-        self.load_state_dict(torch.load("model.pt"))
+    def load_network(self, path):
+        self.load_state_dict(torch.load(path))
         pass
 
     def set_verbose(self, verbose_level):

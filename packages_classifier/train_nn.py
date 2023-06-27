@@ -1,7 +1,7 @@
 import torch
 from torch import nn, optim
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs=70, batch_size=100):
+def train_model(model, X_train, y_train, X_val, y_val, epochs=1000, batch_size=4):
     # Convert lists to PyTorch tensors
     X_train = torch.tensor(X_train, dtype=torch.float32)
     y_train = torch.tensor(y_train, dtype=torch.long)
@@ -48,8 +48,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=70, batch_size=100
 
             # Gather data and report
             running_loss += loss.item()
-            if i % 1000 == 999:
-                last_loss = running_loss / 1000
+            if i % 100 == 99:
+                last_loss = running_loss / 100
                 print(f"\tbatch {i+1: <8} loss: {last_loss: >10.4f}")
                 running_loss = 0
 
@@ -70,5 +70,6 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=70, batch_size=100
 
         # Track best performance and dump model
         if avg_vloss < best_vloss:
+            print("Saving new best")
             best_vloss = avg_vloss
             torch.save(model.state_dict(), "model_cp.pt")

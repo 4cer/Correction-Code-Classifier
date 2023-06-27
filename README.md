@@ -57,3 +57,14 @@ Jako metodę klasyfikacji wybrano model hybrydowy: konwolucyjną incepcyjną sie
   ![GRAFIKA W PRZYGOTOWANIU](http://url/to/img.png)
 </details>
 Opis Lorem Ipsum -->
+
+## 4. Wyniki działania
+<details>
+  <summary>Duża grafika</summary>
+
+  ![alt text](https://i.imgur.com/rl8QAel.png)
+</details>
+<p>Niestety dla utworzonego zbioru danych wynik jest nieznacznie gorszy od losowego zgadywania - dla 4 możliwości teoretyczna szansa trafienia wynosi 25%; klasyfikator dobrze trafia z prawdopodobieństwem 0.244</p>
+
+## Wnioski
+Zbiór danych utworzony na podstawie szumu, mimo wprowadzenia źródła informacji jakim jest kodowanie ciągów, nie nadaje się do treningu sieci. Podstawę zbioru danych musi stanowić źródło sygnałów o wysokim wskaźniku SNR, gdyż w przeciwnym wypadku sieci neuronowe nie wykazują postępów w treningu.

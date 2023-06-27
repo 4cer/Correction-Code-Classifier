@@ -1,5 +1,6 @@
 from packages_classifier.model_nn import NeuralNet
 from packages_classifier.train_nn import train_model
+from packages_classifier.trained_nn import test_model
 from packages_gio import prepare_data
 
 
@@ -52,8 +53,12 @@ def __train__():
     pass
 
 def __trained__():
-    print("Not Implemented yet: __trained__()")
-    raise NotImplemented()
+    _, _, _, _, X_test, y_test = prepare_data("./packages_datasetgen/demofile.txt")
+    model = NeuralNet()
+    model.load_network("model_cp.pt")
+
+    test_model(model, X_test, y_test)
+    pass
 
 def __run__():
     import sys
