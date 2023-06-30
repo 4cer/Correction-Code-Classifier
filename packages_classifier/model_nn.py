@@ -45,9 +45,15 @@ class NeuralNet(nn.Module):
         # Post-inception
         self.p1_avgp_16x1 = nn.AvgPool1d(kernel_size=16)
         self.p2_dropout = nn.Dropout(p=0.2)
-        self.p3_linear = nn.Linear(in_features=256, out_features=128)
-        self.p4_linear = nn.Linear(in_features=128, out_features=4)
-        
+
+        # # len(codedMsg) = 384
+        # self.p3_linear = nn.Linear(in_features=256, out_features=128)
+        # self.p4_linear = nn.Linear(in_features=128, out_features=4)
+
+        # len(codedMsk) = 3072
+        self.p3_linear = nn.Linear(in_features=2048, out_features=1024)
+        self.p4_linear = nn.Linear(in_features=1024, out_features=4)
+
 
     def forward(self, x):
         if self.__VERBOSE_LEVEL > 1: print(f"{'DIM INPUT:': <30} {np.shape(x).__str__(): >20}")

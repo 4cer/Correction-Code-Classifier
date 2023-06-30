@@ -14,8 +14,9 @@ def __dhelp__():
 
 def __test__():
     import numpy as np
-    sample_input = np.zeros((10,382),dtype=np.float16)
+    sample_input = np.zeros((10,3072),dtype=np.float16)
     model = NeuralNet()
+    model.set_verbose(2)
     
     import torch
     with torch.no_grad():
