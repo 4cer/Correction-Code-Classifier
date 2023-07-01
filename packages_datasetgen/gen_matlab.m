@@ -1,48 +1,53 @@
 % Basic setup
 fclose('all');
-NumDatum = 10000;
+NumDatum = 1000000;
 
 % Create text sources
 fs_root = ".\AO\SRC\";
-ds = "C:\Users\leejo\Documents\VSCode\AOP2\AO_Projekt_1\dataset\dataset.csv";
+ds = ".\AO\dataset\datasetBIG.csv";
 
-file_handles = [
-    fopen(fs_root + "dzieje-tristana-i-izoldy.txt")
-    fopen(fs_root + "homer-odyseja.txt")
-    fopen(fs_root + "pan-tadeusz.txt")
-    fopen(fs_root + "przygody-tomka-sawyera.txt")
-    fopen(fs_root + "quo-vadis.txt")
-    fopen(fs_root + "syzyfowe-prace.txt")
-    fopen(fs_root + "w-pustyni-i-w-puszczy.txt")
-];
+f_names = dir(fullfile(fs_root, '*.txt'));
+file_handles = [];
 
-file_contents = {
-    fgets(file_handles(1), inf)
-    fgets(file_handles(2), inf)
-    fgets(file_handles(3), inf)
-    fgets(file_handles(4), inf)
-    fgets(file_handles(5), inf)
-    fgets(file_handles(6), inf)
-    fgets(file_handles(7), inf)
-};
+for fhi = 1:length(f_names)
+    file_handles(fhi,1) = fopen(fs_root + f_names(fhi).name, 'r', 'n', "UTF-8");
+end
 
-file_maxstart = strlength(file_contents)-385;
+file_contents = {};
 
+for fhi = 1:length(file_handles)
+    file_contents{fhi,1} = [fgets(file_handles(fhi), inf)];
+end
+
+file_maxstart = strlength(file_contents)-386;
+
+fopen(ds,"w");
 fclose('all');
 
 % Coders
-bch_code = comm.BCHEncoder(255, 239,bchgenpoly(255,239),6);
-rs_code = comm.RSEncoder('BitInput',true, 'CodewordLength',255, 'MessageLength',239, 'ShortMessageLength',6);
+bch_coders = {
+    comm.BCHEncoder(31,26,bchgenpoly(31,26),6)
+    comm.BCHEncoder(15,11,bchgenpoly(15,11),6)
+    comm.BCHEncoder(7,4,bchgenpoly(7,4),4)
+};
 
+rs_coders = {
+    comm.RSEncoder(15,8,"BitInput",true)
+    comm.RSEncoder(15,12,"BitInput",true)
+    comm.RSEncoder(7,4,"BitInput",true)
+};
 
 numgen = 1;
 rindices = randi([1,7],1,NumDatum);
 rstarts = rand(1,NumDatum);
+rcodervar_h = randi([1,3],1,NumDatum);
+rcodervar_b = randi([1,3],1,NumDatum);
+rcodervar_r = randi([1,3],1,NumDatum);
 
 while numgen <= NumDatum
     index = rindices(numgen);
-    start = floor(file_maxstart(index) * rstarts(numgen));
-    utf8_string = file_contents{index}(start:start+383);
+    start = 1+floor(file_maxstart(index) * rstarts(numgen));
+    utf8_string = file_contents{index}(start:start+384);
     numgen = numgen + 1;
 
     % Decode UTF-8 string into binary representation
@@ -57,20 +62,38 @@ while numgen <= NumDatum
     end
     
     % Write it raw
-    writelines(sprintf('%d',binary_string(1:3071))+";0", ds, WriteMode="append")
+    writelines(sprintf('%d',binary_string(1:3072))+";0", ds, WriteMode="append");
 
     % Encode with Hamming code
     % hamming_code = comm.HammingEncoder;
-    hamming_encoded = encode(binary_string, 255, 247, 'hamming/binary');
-    writelines(sprintf('%d',hamming_encoded(1:3071))+";1", ds, WriteMode="append");
+    switch rcodervar_h(numgen)
+        case 1
+            % hamming_encoded = encode(binary_string, 255, 247, 'hamming/binary')';
+            hamming_encoded = encode(binary_string, 31, 26, 'hamming/binary')';
+        case 2
+            hamming_encoded = encode(binary_string, 15, 11, 'hamming/binary')';
+        case 3
+            hamming_encoded = encode(binary_string, 7, 4, 'hamming/binary')';
+        otherwise
+            throw(MException('Illegal variant index %d', codevar))
+    end
+    % hamming_encoded = encode(binary_string, 255, 247, 'hamming/binary')';
+    hamming_str = sprintf('%d',hamming_encoded(1:3072))+";1";
+    % length(sprintf('%d',hamming_encoded(1:3072)))
+    writelines(hamming_str, ds, WriteMode="append");
 
     % Encode with BCH code
+    bch_code = bch_coders{rcodervar_b(numgen)};
     bch_encoded = step(bch_code, binary_string);
-    writelines(sprintf('%d',bch_encoded(1:3071))+";2", ds, WriteMode="append");
+    bch_str = sprintf('%d',bch_encoded(1:3072))+";2";
+    writelines(bch_str, ds, WriteMode="append");
 
     % Encode with RS code
+    rs_code = rs_coders{rcodervar_r(numgen)};
     rs_encoded = step(rs_code,binary_string);
-    writelines(sprintf('%d',rs_encoded(1:3071))+";3", ds, WriteMode="append");
+    rs_str = sprintf('%d',rs_encoded(1:3072))+";3";
+    writelines(rs_str, ds, WriteMode="append");
+
     if mod(numgen,100) == 0
         fprintf('Iteration %d/%d\n',numgen,NumDatum)
     end
