@@ -43,7 +43,7 @@ class NeuralNet(nn.Module):
         self.rx_maxp_1x2 = nn.MaxPool1d(kernel_size=2, stride=2)
 
         # Post-inception
-        self.p1_avgp_16x1 = nn.AvgPool1d(kernel_size=16)
+        self.p1_avgp_16x1 = nn.AvgPool1d(kernel_size=128)
         self.p2_dropout = nn.Dropout(p=0.2)
 
         # # len(codedMsg) = 384
@@ -51,8 +51,8 @@ class NeuralNet(nn.Module):
         # self.p4_linear = nn.Linear(in_features=128, out_features=4)
 
         # len(codedMsk) = 3072
-        self.p3_linear = nn.Linear(in_features=2048, out_features=1024)
-        self.p4_linear = nn.Linear(in_features=1024, out_features=4)
+        self.p3_linear = nn.Linear(in_features=256, out_features=128)
+        self.p4_linear = nn.Linear(in_features=128, out_features=4)
 
 
     def forward(self, x):

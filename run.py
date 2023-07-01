@@ -34,11 +34,13 @@ def __test__():
             print(prob)
 
 def __train__():
-    X_train, y_train, X_val, y_val, _, _ = prepare_data("./packages_datasetgen/demofile.txt")
+    # X_train, y_train, X_val, y_val, _, _ = prepare_data("./packages_datasetgen/demofile.txt")
+    X_train, y_train, X_val, y_val, _, _ = prepare_data("./dataset/dataset.csv")
 
     import numpy as np
 
     model = NeuralNet()
+    # model.set_verbose(2)
 
     if model.gpu_available():
         model.empty_gpu_cache()
@@ -54,7 +56,8 @@ def __train__():
     pass
 
 def __trained__():
-    _, _, _, _, X_test, y_test = prepare_data("./packages_datasetgen/demofile.txt")
+    # _, _, _, _, X_test, y_test = prepare_data("./packages_datasetgen/demofile.txt")
+    _, _, _, _, X_test, y_test = prepare_data("./dataset/dataset.csv")
     model = NeuralNet()
     model.load_network("model_cp.pt")
 
