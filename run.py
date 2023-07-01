@@ -35,7 +35,7 @@ def __test__():
 
 def __train__():
     # X_train, y_train, X_val, y_val, _, _ = prepare_data("./packages_datasetgen/demofile.txt")
-    X_train, y_train, X_val, y_val, _, _ = prepare_data("./dataset/dataset.csv")
+    X_train, y_train, X_val, y_val, _, _ = prepare_data("./dataset/datasetBIG.csv")
 
     import numpy as np
 
@@ -52,14 +52,15 @@ def __train__():
     # TRAIN MODEL
     train_model(model, X_train, y_train, X_val, y_val)
     # SAVE MODEL
-    model.save_network("model_fi.pt")
+    # model.save_network("model_fi.pt")
     pass
 
 def __trained__():
     # _, _, _, _, X_test, y_test = prepare_data("./packages_datasetgen/demofile.txt")
     _, _, _, _, X_test, y_test = prepare_data("./dataset/dataset.csv")
+    # _, _, _, _, X_test, y_test = prepare_data("./dataset/datasetBIG.csv")
     model = NeuralNet()
-    model.load_network("model_cp.pt")
+    model.load_network("model_cp_76.pt")
 
     test_model(model, X_test, y_test)
     pass

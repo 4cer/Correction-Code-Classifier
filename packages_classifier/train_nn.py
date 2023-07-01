@@ -1,7 +1,7 @@
 import torch
 from torch import nn, optim
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs=1000, batch_size=4):
+def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16, learning_rate=2e-3):
     # Convert lists to PyTorch tensors
     X_train = torch.tensor(X_train, dtype=torch.float32)
     y_train = torch.tensor(y_train, dtype=torch.long)
@@ -24,7 +24,13 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=1000, batch_size=4
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
     
     # Define the optimizer and loss function
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(),
+                           lr=learning_rate)
+    scheduler = optim.lr_scheduler.StepLR(  optimizer,
+                                            step_size=10,
+                                            gamma=2e-4,
+                                            last_epoch=-1,
+                                            verbose=True)
     criterion = nn.CrossEntropyLoss()
 
     best_vloss = 1_000_000.
@@ -64,9 +70,11 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=1000, batch_size=4
                 running_vloss += criterion(torch.squeeze(model(inputs_u)), labels)
             
         avg_vloss = running_vloss / (j + 1)
+
+        scheduler.step()
         
         # print(f'Epoch {epoch+1}/{epochs} - Loss: {loss.item()} - Val loss: {running_vloss.item()}')
-        print(f'Epoch {epoch+1}/{epochs}: LOSS Training: {last_loss} - Validation: {avg_vloss}')
+        print(f'Epoch {epoch+1}/{epochs}: LOSS Training: {last_loss} - Validation: {avg_vloss} - Learning rate: {optimizer.param_groups[0]["lr"]}')
 
         # Track best performance and dump model
         if avg_vloss < best_vloss:
