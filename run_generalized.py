@@ -6,31 +6,30 @@ import torch
 
 def __dhelp__():
     import sys
-    print("USAGE IN ORDER")
-    print(f"\t{sys.argv[0]} [FLAGS] [-f DATASET_PATH] [-m MODEL_OUTPUT_PATH] [-i SAVED_MODEL_PATH] [-s ROWS_TO_SKIP] [-r ROWS_TO_READ] [-t|n|k]")
+    print("USAGE")
+    print(f"\t{sys.argv[0]} [RUN ARGUMENTS] [PATH ARGUMENTS] [-t|n|k]")
     
     print("\nRUN ARGUMENTS")
-    print(f"{'-c': >6}{' ': >6}Attempt to use CUDA, training only")
-    print(f"{' ': >12}an NVidia GPU must be available")
-    print(f"{'-r [ROWS_TO_READ]': >6}{' ': >6}How many rows to read from dataset")
-    print(f"{' ': >12}Integer, defaults to None for all")
-    print(f"{'-s [ROWS_TO_SKIP]': >6}{' ': >6}How many rows to skip from dataset")
-    print(f"{' ': >12}Integer, defaults to None for none")
+    print(f"{' ': >4}{'-c': <22}{' ': >4}Attempt to use CUDA, training only")
+    print(f"{' ': >30}an NVidia GPU must be available")
+    print(f"{' ': >4}{'-r [ROWS_TO_READ]': <22}{' ': >4}How many rows to read from dataset")
+    print(f"{' ': <32}Integer, defaults to None for all")
+    print(f"{' ': >4}{'-s [ROWS_TO_SKIP]': <22}{' ': >4}How many rows to skip from dataset")
+    print(f"{' ': >30}Integer, defaults to None for none")
 
     print("\nPATHS")
-    print(f"{'-f [DATASET_PATH]': >6}{' ': >6}Path to dataset, assumed csv format:")
-    print(f"{' ': >12}[3072 bits of encoded data];[integer label:0-3]")
-    print(f"{'-m [MODEL_OUTPUT_PATH]': >6}{' ': >6}Path to directory for model output")
-    print(f"{' ': >12}Useful only for TRAINING operation (-t flag)")
-    print(f"{'-i [SAVED_MODEL_PATH]': >6}{' ': >6}Path to pretrained model")
-    print(f"{' ': >12}Useful only for RUN TRAINED operation (-n flag)")
+    print(f"{' ': >4}{'-f [DATASET_PATH]': <22}{' ': >4}Path to dataset, assumed csv format:")
+    print(f"{' ': >30}[3072 bits of encoded data];[integer label:0-3]")
+    print(f"{' ': >4}{'-m [MODEL_OUTPUT_PATH]': <22}{' ': >4}Path to directory for model output")
+    print(f"{' ': >30}Useful only for TRAINING operation (-t flag)")
+    print(f"{' ': >4}{'-i [SAVED_MODEL_PATH]': <22}{' ': >4}Path to pretrained model")
+    print(f"{' ': >30}Useful only for RUN TRAINED operation (-n flag)")
 
-    print("\nACTIONS")
-    print("select precisely one")
-    print(f"{'-t': >6}{' ': >6}Train model")
-    print(f"{'-n': >6}{' ': >6}Run trained model")
-    print(f"{' ': >12}only possible if model.pt exists")
-    print(f"{'-k': >6}{' ': >6}Test untrained network")
+    print("\nACTIONS (select one)")
+    print(f"{' ': >4}{'-t': <22}{' ': >4}Train model")
+    print(f"{' ': >4}{'-n': <22}{' ': >4}Run specified trained model")
+    print(f"{' ': >30}requires -i to specify model path")
+    print(f"{' ': >4}{'-k': <22}{' ': >4}Test untrained network")
 
 
 def __test__():
@@ -77,10 +76,19 @@ def __train__(try_CUDA=False, dataset_path="./dataset/dataset.csv", models_path=
     # model.save_network("model_fi.pt")
     pass
 
-def __trained__(dataset_path="./dataset/dataset.csv", trained_model_path="./model_cp_76.pt", nrows=None, skiprows=None):
+def __trained__(try_CUDA=False, dataset_path="./dataset/dataset.csv", trained_model_path="./model_cp_76.pt", nrows=None, skiprows=None):
     model = NeuralNet()
     model.load_network(trained_model_path)
 
+    if try_CUDA and model.gpu_available():
+        print("Attempting to load NeuralNet to CUDA...")
+        model.empty_gpu_cache()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        model = model.to(device)
+        # torch.backends.cuda.matmul.allow_tf32 = True
+
+    print(f"NeuralNet params on CUDA: {next(model.parameters()).is_cuda}")
+    
     print("Reading data...")
     _, _, _, _, X_test, y_test = prepare_data(dataset_path, nrows, skiprows)
     print("Data read successfully")
@@ -99,9 +107,10 @@ def __run__():
     try_CUDA = False
     dataset_path = "./dataset/dataset.csv"
     models_path = "./models/"
-    trained_model_path = "./model_cp_76.pt"
+    trained_model_path = "./models/model_cp_76.pt"
     nrows = None
     skiprows = None
+    actions = [0,0,0]
 
     i = 1
 
@@ -127,16 +136,32 @@ def __run__():
                 skiprows = int(sys.argv[i+1])
                 i +=1
             case '-t':
-                __train__(try_CUDA, dataset_path, models_path, nrows, skiprows)
+                actions[0] += 1
                 pass
             case '-n':
-                __trained__(dataset_path, trained_model_path, nrows, skiprows)
+                actions[1] += 1
                 pass
             case '-k':
-                __test__()
+                actions[2] += 1
             case _:
                 __dhelp__()
+                print(f"Unrecognized flag: {sys.argv[i]}")
+                raise ValueError("ERROR: Unknown flag")
         i += 1
+        pass
+    if sum(actions) != 1:
+        __dhelp__()
+        raise ValueError("ERROR: Select exactly one action argument")
+    match actions:
+        case [1,0,0]:
+            __train__(try_CUDA, dataset_path, models_path, nrows, skiprows)
+            pass
+        case [0,1,0]:
+            __trained__(try_CUDA, dataset_path, trained_model_path, nrows, skiprows)
+            pass
+        case [0,0,1]:
+            __test__()
+            pass
     pass
 
 

@@ -12,7 +12,8 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16
     gc.collect()
 
     # Load to GPU
-    if model.gpu_available():
+    if next(model.parameters()).is_cuda:
+        print("Transfering data to CUDA...")
         dev = model.get_device()
         X_train = X_train.to(dev)
         y_train = y_train.to(dev)
