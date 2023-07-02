@@ -1,12 +1,15 @@
 import torch
 from torch import nn, optim
+from datetime import datetime
+import gc
 
-def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16, learning_rate=2e-3):
+def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16, learning_rate=2e-3, models_path="./dataset/dataset.csv"):
     # Convert lists to PyTorch tensors
     X_train = torch.tensor(X_train, dtype=torch.float32)
     y_train = torch.tensor(y_train, dtype=torch.long)
     X_val = torch.tensor(X_val, dtype=torch.float32)
     y_val = torch.tensor(y_val, dtype=torch.long)
+    gc.collect()
 
     # Load to GPU
     if model.gpu_available():
@@ -16,6 +19,7 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16
         X_val = X_val.to(dev)
         y_val = y_val.to(dev)
     print(f"Data is on CUDA: {X_train.is_cuda and y_train.is_cuda and X_val.is_cuda and y_val.is_cuda}")
+    gc.collect()
     
     # Create data loaders
     train_data = torch.utils.data.TensorDataset(X_train, y_train)
@@ -26,11 +30,17 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16
     # Define the optimizer and loss function
     optimizer = optim.Adam(model.parameters(),
                            lr=learning_rate)
-    scheduler = optim.lr_scheduler.StepLR(  optimizer,
-                                            step_size=10,
-                                            gamma=2e-4,
-                                            last_epoch=-1,
-                                            verbose=True)
+    # scheduler = optim.lr_scheduler.StepLR(  optimizer,
+    #                                         step_size=10,
+    #                                         gamma=2e-4,
+    #                                         last_epoch=-1,
+    #                                         verbose=True)
+    scheduler = optim.lr_scheduler.ExponentialLR(
+        optimizer=optimizer,
+        gamma=0.8,
+        last_epoch=-1,
+        verbose=True
+    )
     criterion = nn.CrossEntropyLoss()
 
     best_vloss = 1_000_000.
@@ -80,4 +90,4 @@ def train_model(model, X_train, y_train, X_val, y_val, epochs=200, batch_size=16
         if avg_vloss < best_vloss:
             print("Saving new best")
             best_vloss = avg_vloss
-            torch.save(model.state_dict(), "model_cp.pt")
+            torch.save(model.state_dict(), f"{models_path}{datetime.now().strftime('%m%d-%H%M')}_model_{avg_vloss:.8f}_cp.pt")

@@ -1,24 +1,9 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-import numpy as np
-
-def binarize(row):
-    match row:
-        case 0:
-            return [1,0,0,0]
-        case 1:
-            return [0,1,0,0]
-        case 2:
-            return [0,0,1,0]
-        case 3:
-            return [0,0,0,1]
-        case _:
-            raise ValueError("Value not an integer in 0-3 range (inclusive)")
-
-def prepare_data(filename):
+def prepare_data(filename, skiprows=None, nrows=None):
     # Read the CSV file
-    data = pd.read_csv(filename, sep=';', header=None)
+    data = pd.read_csv(filename, sep=';', header=None, skiprows=skiprows, nrows=nrows)
     
     # Convert binary strings to integer arrays
     data[0] = data[0].apply(lambda x: [int(bit) for bit in x])

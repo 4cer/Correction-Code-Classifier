@@ -44,7 +44,7 @@ class NeuralNet(nn.Module):
 
         # Post-inception
         self.p1_avgp_16x1 = nn.AvgPool1d(kernel_size=128)
-        self.p2_dropout = nn.Dropout(p=0.2)
+        self.p2_dropout = nn.Dropout(p=0.4)
 
         # # len(codedMsg) = 384
         # self.p3_linear = nn.Linear(in_features=256, out_features=128)
