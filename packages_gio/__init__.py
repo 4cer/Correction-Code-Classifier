@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-def prepare_data(filename, skiprows=None, nrows=None):
+def prepare_data(filename, skiprows=None, nrows=None, split_dataset = True):
     # Read the CSV file
     data = pd.read_csv(filename, sep=';', header=None, skiprows=skiprows, nrows=nrows)
     
@@ -14,6 +14,10 @@ def prepare_data(filename, skiprows=None, nrows=None):
     # Split the data into features (X) and labels (y)
     X = data[0].tolist()
     y = data[1].tolist()
+
+    # Return unsplit if requested
+    if not split_dataset:
+        return [], [], [], [], X, y
     
     # Split the data into training, validation, and test sets
     X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.05, random_state=42)

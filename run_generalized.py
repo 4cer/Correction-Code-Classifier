@@ -12,6 +12,8 @@ def __dhelp__():
     print("\nRUN ARGUMENTS")
     print(f"{' ': >4}{'-c': <22}{' ': >4}Attempt to use CUDA, training only")
     print(f"{' ': >30}an NVidia GPU must be available")
+    print(f"{' ': >4}{'-u': <22}{' ': >4}Don't split loaded data into subsets")
+    print(f"{' ': >30}Only for testing with trained model")
     print(f"{' ': >4}{'-r [ROWS_TO_READ]': <22}{' ': >4}How many rows to read from dataset")
     print(f"{' ': <32}Integer, defaults to None for all")
     print(f"{' ': >4}{'-s [ROWS_TO_SKIP]': <22}{' ': >4}How many rows to skip from dataset")
@@ -67,7 +69,7 @@ def __train__(try_CUDA=False, dataset_path="./dataset/dataset.csv", models_path=
     print(f"NeuralNet params on CUDA: {next(model.parameters()).is_cuda}")
 
     print("Reading data...")
-    X_train, y_train, X_val, y_val, _, _ = prepare_data(dataset_path, nrows, skiprows)
+    X_train, y_train, X_val, y_val, _, _ = prepare_data(dataset_path, nrows, skiprows, split_dataset = True)
     print("Data read successfully")
     
     # TRAIN MODEL
@@ -76,7 +78,7 @@ def __train__(try_CUDA=False, dataset_path="./dataset/dataset.csv", models_path=
     # model.save_network("model_fi.pt")
     pass
 
-def __trained__(try_CUDA=False, dataset_path="./dataset/dataset.csv", trained_model_path="./model_cp_76.pt", nrows=None, skiprows=None):
+def __trained__(try_CUDA=False, dataset_path="./dataset/dataset.csv", trained_model_path="./model_cp_76.pt", nrows=None, skiprows=None, split_dataset = True):
     model = NeuralNet()
     model.load_network(trained_model_path)
 
@@ -90,7 +92,7 @@ def __trained__(try_CUDA=False, dataset_path="./dataset/dataset.csv", trained_mo
     print(f"NeuralNet params on CUDA: {next(model.parameters()).is_cuda}")
     
     print("Reading data...")
-    _, _, _, _, X_test, y_test = prepare_data(dataset_path, nrows, skiprows)
+    _, _, _, _, X_test, y_test = prepare_data(dataset_path, nrows, skiprows, split_dataset)
     print("Data read successfully")
 
     test_model(model, X_test, y_test)
@@ -111,6 +113,7 @@ def __run__():
     nrows = None
     skiprows = None
     actions = [0,0,0]
+    split_trained = True
 
     i = 1
 
@@ -118,6 +121,8 @@ def __run__():
         match sys.argv[i]:
             case '-c':
                 try_CUDA = True
+            case '-u':
+                split_trained = False
             case '-f':
                 dataset_path = sys.argv[i+1]
                 i +=1
@@ -157,7 +162,7 @@ def __run__():
             __train__(try_CUDA, dataset_path, models_path, nrows, skiprows)
             pass
         case [0,1,0]:
-            __trained__(try_CUDA, dataset_path, trained_model_path, nrows, skiprows)
+            __trained__(try_CUDA, dataset_path, trained_model_path, nrows, skiprows, split_trained)
             pass
         case [0,0,1]:
             __test__()
