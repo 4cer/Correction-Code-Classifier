@@ -1,0 +1,5 @@
+numpy==1.24.1
+pandas==2.0.2
+reedsolo==1.7.0
+scikit_learn==1.2.2
+torch==2.0.1+cu118

@@ -7,3 +7,5 @@
 # Ignore everything but self
 # *
 !.gitignore
+!datasetBSAMPLE.csv
+!.dataset_issues

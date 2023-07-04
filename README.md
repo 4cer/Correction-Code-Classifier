@@ -1,5 +1,37 @@
 # AO_Projekt_1
-Pierwszy projekt z AO (Algorytmy Optymalizacji)
+Projekt z AO (Algorytmy Optymalizacji) - wykrywanie i klasyfikacja kodów korekcyjnych w przechwyconej komunikacji niezaszyfrowanym językiem naturalnym.
+
+## 0. Uruchamianie:
+0. Utworzyć i uruchomić środowisko wirtualne Python wykorzystując załączony plik requirements.txt
+1. Zainstalować PyTorch: dla odpowiedniej konfiguracji sprzętowej: https://pytorch.org/get-started/locally/
+2. Wywołać plik run_generalized.py
+
+Informacje na temat argumentów wywołania można znaleźć poniżej:
+<details>
+  <summary>Pomoc dotycząca wywołania</summary>
+
+  ![alt text](https://i.imgur.com/1nt7VmF.png)
+</details>
+
+### 0.1. Test na próbie 12 ciągów
+`python run_generalized.py -u -f "./dataset/datasetB12T.csv" -i "./models/0702-1720_model_0.77768373_cp.pt" -n`
+
+<details>
+  <summary>Oczekiwany wynik</summary>
+
+  ![alt text](https://i.imgur.com/uivfV48.png)
+</details>
+
+### 0.2. Test na próbie 4000 ciągów
+`python run_generalized.py -c -u -f "./dataset/datasetBSAMPLE.csv" -i "./models/0702-1720_model_0.77768373_cp.pt" -n`
+
+Argument `-c` próbuje wykorzystać technologię CUDA, więc wymaga karty graficznej nvidia architektury GCN lub nowszej.
+
+<details>
+  <summary>Oczekiwany wynik</summary>
+
+  ![alt text](https://i.imgur.com/V5f0dwn.png)
+</details>
 
 ## 1. Opis problemu
 <p>Celem projektu jest stworzenie klasyfikatora rozpoznającego obecność oraz typ jednego z trzech kodów korekcyjnych w wiadomości składającej się z niezaszyfrowanego języka natualnego. W hipotetycznej sytuacji istnieje podejrzenie zastosowania algorytmu kodowania korekcyjnego; celem modelu jest więc potwierdzenie podejrzenia oraz przybliżenie rodziny algorytmów.</p>
@@ -119,5 +151,3 @@ Jako metodę klasyfikacji wybrano model hybrydowy: konwolucyjną incepcyjną sie
 <p>Zbiór danych utworzony na podstawie szumu, mimo wprowadzenia źródła informacji jakim jest kodowanie ciągów, nie nadaje się do treningu sieci. Podstawę zbioru danych musi stanowić źródło sygnałów o niskiej entropii, gdyż w przeciwnym wypadku sieci neuronowe nie wykazują postępów w treningu.</p>
 <p>W celu osiągnięcia zadowalających efektów wykorzystano zbiór danych zawierający 400,000 próbek oraz platformę Google Colab pozwalającą na bezpłatne przeprowadzenie treningu na procesorze graficznym Nvidia Tesla T4.</p>
 <p>Próby wykorzystania modelu trenowanego na mniejszym i mniej różnorodnym zbiorze danych osiągają znacząco niższą skuteczność (przykładowo 51.1%) przy zastosowaniu na większym i bardziej różnorodnym zbiorze danych.</p>
-<br>
-<p>todo dodać wnioski</p>
