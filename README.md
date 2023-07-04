@@ -35,7 +35,7 @@ Jako metodę klasyfikacji wybrano model hybrydowy: konwolucyjną incepcyjną sie
 <details>
   <summary>Duża grafika</summary>
 
-  ![alt text](https://i.imgur.com/o6ZAdNb.jpg)
+  ![alt text](https://i.imgur.com/sZKgmFN.png)
 </details>
 
 ### 2.1. Podejście pierwsze
@@ -78,7 +78,7 @@ Jako metodę klasyfikacji wybrano model hybrydowy: konwolucyjną incepcyjną sie
 <details>
   <summary>Duża grafika</summary>
 
-  ![alt text](https://i.imgur.com/70Hlvc0.jpg)
+  ![alt text](https://i.imgur.com/6hfwQUJ.png)
 </details>
 <p>Przedstawiony model hybrydowy w pierwszych warstwach przebiega podobnie do zwykłego modelu CNN, jednak po pierwszej parze konwolucji oraz poolingu dokonywane są 3 przejścia przez warstwy incepcyjne.</p>
 <p>Po każdej warstwie konwolucyjnej (włączając te wewnątrz warstwy incepcyjnej) zastosowano funkcję ReLU, aby zapobiec zjawisku zanikającego gradientu oraz wprowadzić nieliniowość.</p>
